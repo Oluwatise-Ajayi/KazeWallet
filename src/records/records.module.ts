@@ -11,6 +11,7 @@ import { UtilitiesModule } from '../utilities/utilities.module';
 @Module({
     imports: [PrismaModule, BlockchainModule, UtilitiesModule],
     controllers: [RecordsController],
+    exports: [RecordsService],
     providers: [RecordsService, OcrService, IpfsService, DocumentAnalysisService],
 })
 export class RecordsModule { }

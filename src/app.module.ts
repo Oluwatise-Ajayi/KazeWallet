@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { RecordsModule } from './records/records.module';
 import { FamilyModule } from './family/family.module';
 import { UtilitiesModule } from './utilities/utilities.module';
+import { UsersModule } from './users/users.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -22,6 +23,7 @@ import { validate } from './config/env.validation';
     RecordsModule,
     FamilyModule,
     UtilitiesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
