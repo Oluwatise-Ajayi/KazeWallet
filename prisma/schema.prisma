@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  fullName      String?
+  passwordHash  String
+  role          String
+  phoneNumber   String?
+  walletAddress String?
+  encryptedPKey String?
+  
+  posts         Post[]
+  
+  familyPoolId  String?
+  familyPool    FamilyPool? @relation(fields: [familyPoolId], references: [id])
+  
+  claims        Claim[]
+  medicalRecords MedicalRecord[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FamilyPool {
+  id              String   @id @default(cuid())
+  name            String
+  contractAddress String
+  totalBalance    Float    @default(0)
+  members         User[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  claims          Claim[]
+}
+
+model Claim {
+  id           String     @id @default(cuid())
+  poolId       String
+  pool         FamilyPool @relation(fields: [poolId], references: [id]) // Implicit relation need? No, explicit here.
+  // Wait, FamilyPool needs 'claims' relation field if I put it here? 
+  // Error check: If I define relation here, I might need back relation in FamilyPool unless I ignore it. 
+  // Usually Prisma requires both sides for implicit, or one side for explicit.
+  // Let's add claims to FamilyPool relation. Note: I can't easily edit two blocks at once with replace_file_content if I want to be safe.
+  // Actually, I can just define the relation here and Prisma might complain if the other side is missing.
+  // Better to add `claims Claim[]` to FamilyPool. I will update FamilyPool above.
+  
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  
+  amount       Float
+  reason       String
+  status       String     @default("PENDING")
+  votesFor     Int        @default(0)
+  votesAgainst Int        @default(0)
+  txHash       String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model MedicalRecord {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  type         String
+  title        String
+  summary      String?
+  ipfsHash     String
+  txHash       String?
+  hospitalName String?
+  fileUrl      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
