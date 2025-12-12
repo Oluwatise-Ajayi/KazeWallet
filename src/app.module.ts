@@ -8,11 +8,13 @@ import { AuthModule } from './auth/auth.module';
 import { RecordsModule } from './records/records.module';
 import { FamilyModule } from './family/family.module';
 import { UtilitiesModule } from './utilities/utilities.module';
+import { validate } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate,
     }),
     PrismaModule,
     BlockchainModule,
